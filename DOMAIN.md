@@ -1,73 +1,39 @@
-# DOMAIN.md — Business Domain Reference
+# 领域模型: [项目名]
 
-This file captures domain terminology, business rules, and invariants that Claude
-and contributors must understand to work correctly on this codebase.
+> ⚠️ 本文件为骨架,请运行 `/init` 或手动填充以下内容。
+> 完成后删除此提示行。
 
----
+## 核心实体
 
-## Glossary
-
-<!-- TODO: Define the key nouns in your domain. One term per entry.
-
-| Term | Definition |
-|------|-----------|
-| User | A registered account holder who can log in and create resources. |
-| Workspace | An isolated environment owned by a User or Organisation. |
+<!-- 用 mermaid erDiagram 画出核心实体和关系 -->
+<!-- 示例:
+```mermaid
+erDiagram
+    Company ||--o{ FinancialReport : publishes
+    FinancialReport {
+        string period
+        float revenue
+        float net_income
+    }
+```
 -->
 
-| Term | Definition |
-|------|-----------|
-| _Example_ | _Replace this row with real domain terms._ |
+## 业务规则(不可违反)
 
----
-
-## Core Business Rules
-
-<!-- TODO: List invariants that must always hold true in the system.
-Phrase them as assertions: "A X must always have Y" or "Z can only happen when W."
-
-- An Order must always have at least one LineItem.
-- Payment can only be captured after an Order is in `confirmed` state.
-- A User cannot belong to more than one primary Organisation.
+<!-- 列出 agent 在生成代码时绝对不能违反的规则 -->
+<!-- 示例:
+- 所有金额单位统一为人民币万元
+- 数据以 cninfo 官方披露为权威源
 -->
 
-- _Add business rules here._
+## 术语表
 
----
+| 中文术语 | 英文术语 | 定义 | 代码中的命名 |
+|--------|--------|------|-----------|
+| <!-- 填充 --> | | | |
 
-## State Machines
+## 数据边界
 
-<!-- TODO: For entities with lifecycle states, describe valid transitions.
-
-### Order States
-pending → confirmed → shipped → delivered
-pending → cancelled
-confirmed → cancelled (only before payment captured)
--->
-
----
-
-## External Systems & Integrations
-
-<!-- TODO: List third-party services and what role they play.
-
-| System | Purpose | Docs |
-|--------|---------|------|
-| Stripe | Payment processing | https://stripe.com/docs |
-| SendGrid | Transactional email | https://docs.sendgrid.com |
--->
-
----
-
-## Data Ownership & Privacy
-
-<!-- TODO: Describe which data is PII, retention policies, and deletion rules. -->
-
----
-
-## Filling Guide
-
-1. Replace every `<!-- TODO: ... -->` block with real content.
-2. Keep entries short — a sentence or two per term is enough.
-3. Update this file whenever a new domain concept is introduced in code.
-4. Reference this file from `CLAUDE.md` so AI assistants load it automatically.
+- 数据源: <!-- 列出所有数据源及其可信度 -->
+- 更新频率: <!-- 各数据源的更新周期 -->
+- 已知数据质量问题: <!-- 如 AkShare 参数漂移 -->
