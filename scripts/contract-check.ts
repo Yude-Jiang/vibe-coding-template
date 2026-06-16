@@ -35,11 +35,17 @@ function checkFirebaseBlueprintContract(root: string): void {
   const blueprintPath = path.join(root, "firebase-blueprint.json");
   const blueprint = readJson(blueprintPath);
 
-  const entities = blueprint.entities as JsonObject | undefined;
-  const firestore = blueprint.firestore as Record<string, FirestoreCollectionSchema> | undefined;
+  const entitiesCandidate = blueprint.entities;
+  if (!entitiesCandidate || typeof entitiesCandidate !== "object") {
+    throw new Error("firebase-blueprint.entities must exist");
+  }
+  const entities = entitiesCandidate as JsonObject;
 
-  assert(entities && typeof entities === "object", "firebase-blueprint.entities must exist");
-  assert(firestore && typeof firestore === "object", "firebase-blueprint.firestore must exist");
+  const firestoreCandidate = blueprint.firestore;
+  if (!firestoreCandidate || typeof firestoreCandidate !== "object") {
+    throw new Error("firebase-blueprint.firestore must exist");
+  }
+  const firestore = firestoreCandidate as Record<string, FirestoreCollectionSchema>;
 
   const entityKeys = new Set(Object.keys(entities));
   assert(entityKeys.size > 0, "firebase-blueprint.entities cannot be empty");
@@ -48,6 +54,9 @@ function checkFirebaseBlueprintContract(root: string): void {
     const schema = value.schema;
     assert(schema && typeof schema === "object", `firestore.${collection}.schema must exist`);
     const ref = schema?.$ref;
+    if (typeof ref !== "string") {
+      throw new Error(`firestore.${collection}.schema.$ref must be a non-empty string`);
+    }
     assert(typeof ref === "string" && ref.length > 0, `firestore.${collection}.schema.$ref must be a non-empty string`);
     assert(entityKeys.has(ref), `firestore.${collection}.schema.$ref "${ref}" must reference an existing entity`);
   }
