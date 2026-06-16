@@ -2,6 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 type JsonObject = Record<string, unknown>;
+type FirestoreCollectionSchema = {
+  schema?: {
+    $ref?: string;
+  };
+};
 
 function readJson(filePath: string): JsonObject {
   return JSON.parse(fs.readFileSync(filePath, "utf8")) as JsonObject;
@@ -31,7 +36,7 @@ function checkFirebaseBlueprintContract(root: string): void {
   const blueprint = readJson(blueprintPath);
 
   const entities = blueprint.entities as JsonObject | undefined;
-  const firestore = blueprint.firestore as JsonObject | undefined;
+  const firestore = blueprint.firestore as Record<string, FirestoreCollectionSchema> | undefined;
 
   assert(entities && typeof entities === "object", "firebase-blueprint.entities must exist");
   assert(firestore && typeof firestore === "object", "firebase-blueprint.firestore must exist");
@@ -40,9 +45,9 @@ function checkFirebaseBlueprintContract(root: string): void {
   assert(entityKeys.size > 0, "firebase-blueprint.entities cannot be empty");
 
   for (const [collection, value] of Object.entries(firestore)) {
-    const schema = (value as JsonObject).schema as JsonObject | undefined;
+    const schema = value.schema;
     assert(schema && typeof schema === "object", `firestore.${collection}.schema must exist`);
-    const ref = schema.$ref;
+    const ref = schema?.$ref;
     assert(typeof ref === "string" && ref.length > 0, `firestore.${collection}.schema.$ref must be a non-empty string`);
     assert(entityKeys.has(ref), `firestore.${collection}.schema.$ref "${ref}" must reference an existing entity`);
   }
